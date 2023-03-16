@@ -6,7 +6,7 @@ function getConnection() {
 
     $server="localhost";
     $login="root";
-    $mdp="";
+    $mdp='$iutinfo';
     $db ="db_articlesblogs";
 
     $linkpdo = '';
@@ -52,14 +52,14 @@ function actionGet($linkpdo) {
 
 }
 
-function actionPost($datePublication, $contenu, $idUtilisateur,  $linkpdo) {
+function actionPost($contenu, $idUtilisateur,  $linkpdo) {
     $query = $linkpdo->prepare('INSERT INTO article(datePublication, contenu, idUtilisateur) VALUES (:datePublication, :contenu, :idUtilisateur)');
     
     if ($query == false) {
         die('Erreur prepare dans la fonction actionPost');
     }
 
-    $query->bindValue(':datePublication', $datePublication);
+    $query->bindValue(':datePublication', date("Y-m-d H:i:s"));
     $query->bindValue(':contenu', $contenu );
     $query->bindValue(':idUtilisateur', $idUtilisateur);
     $query->execute();

@@ -19,12 +19,12 @@ $linkpdo = getConnection();
         } else {
             $resultat = actionGet($linkpdo);
         }
-
+        /*
         //POUR FAIRE D'AUTRES GET
         if (!empty($_GET['?'])) {
             
         }
-
+        */
 
         if ($resultat == null) {
             deliver_response(404, "La ressource que vous recherchez n'existe pas",null);
@@ -39,7 +39,7 @@ $linkpdo = getConnection();
     $postedData = file_get_contents('php://input');
     $data = json_decode($postedData, true);
     /// Traitement
-    actionPost($data['datePublication'], $data['contenu'], $data['idUtilisateur'],  $linkpdo);
+    actionPost($data['contenu'], $data['idUtilisateur'],  $linkpdo);
 
     /// Envoi de la réponse au Client
     deliver_response(201, "Requete INSERT réussie", $postedData);
