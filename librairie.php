@@ -22,6 +22,18 @@ function getConnection() {
 
 }
 
+function getIdByUsername($username, $linkpdo) {
+    $query = $linkpdo->query('SELECT idUtilisateur FROM utilisateur WHERE login = ' . $username);
+
+    if ($query == false) {
+        die('Erreur query dans la fonction getIdByUsername');
+    }
+
+    $id = $query->fetch();
+    return $id ;
+
+}
+
 
 function actionGetById($idArticle,$linkpdo) {
     $query = $linkpdo->query('SELECT * FROM article WHERE idArticle ='. $idArticle);
@@ -31,9 +43,25 @@ function actionGetById($idArticle,$linkpdo) {
     }
 
     while($donnees = $query->fetch(PDO::FETCH_ASSOC)) {
-        $article[] = $donnees;
+        $articles[] = $donnees;
     }
-    return $article ;
+    return $articles ;
+
+}
+
+
+function actionGetArticlesByUser($idUtilisateur, $linkpdo) {
+    $query = $linkpdo->query('SELECT * FROM article WHERE idUtilisateur ='. $idUtilisateur);
+
+
+    if ($query == false) {
+        die('Erreur query dans la fonction actionGetArticlesByUser');
+    }
+
+    while($donnees = $query->fetch(PDO::FETCH_ASSOC)) {
+        $articles[] = $donnees;
+    }
+    return $articles ;
 
 }
 
