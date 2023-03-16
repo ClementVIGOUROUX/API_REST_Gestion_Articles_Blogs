@@ -92,20 +92,21 @@ function actionDeleteById($id,$linkpdo) {
 
 //A faire pour le jeton
 
-
-function isValidUser($user){
+function isValidUser($userlogin, $userpassword,  $linkpdo) {
+    $query = $linkpdo->query('SELECT u.motDePasse FROM utilisateur u WHERE login = '. $userlogin);
+    $row = $query->fetch();
+    return ($row == $userpassword);
 }
 
 
 
 
-function actionPostAuth($login, $password) {
 
+function actionPostAuth($userlogin, $userpassword, $linkpdo) {
 
-
-    if ($login == 'test' && $password == 'azerty') {
+    if (isValidUser($userlogin, $userpassword, $linkpdo)) {
         $headers = array('alg' => 'HS256', 'typ' => 'JWT');
-        $payload = array('username' => $login, 'exp' =>(time() + 60));
+        $payload = array('username' => $userlogin, 'exp' =>(time() + 60));
         //Création du token
         $token = generate_jwt($headers, $payload);
 
