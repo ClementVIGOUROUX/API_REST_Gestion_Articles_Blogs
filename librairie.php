@@ -105,8 +105,12 @@ function isValidUser($userlogin, $userpassword,  $linkpdo) {
 function actionPostAuth($userlogin, $userpassword, $linkpdo) {
 
     if (isValidUser($userlogin, $userpassword, $linkpdo)) {
+
+        $query = $linkpdo->query('SELECT u.role FROM utilisateur u WHERE login = '. $userlogin);
+        $role = $query->fetch();
+
         $headers = array('alg' => 'HS256', 'typ' => 'JWT');
-        $payload = array('username' => $userlogin, 'exp' =>(time() + 60));
+        $payload = array('username' => $userlogin, 'role' => $role, 'exp' =>(time() + 60));
         //Création du token
         $token = generate_jwt($headers, $payload);
 
