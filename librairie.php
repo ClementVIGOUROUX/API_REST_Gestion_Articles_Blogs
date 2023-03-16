@@ -91,12 +91,21 @@ function actionDeleteById($id,$linkpdo) {
 }
 
 //A faire pour le jeton
-/*
-function actionPostAuth($id, $password) {
 
-    if ($id == 'test' && $password == 'azerty') {
+
+function isValidUser($user){
+}
+
+
+
+
+function actionPostAuth($login, $password) {
+
+
+
+    if ($login == 'test' && $password == 'azerty') {
         $headers = array('alg' => 'HS256', 'typ' => 'JWT');
-        $payload = array('username' => $id, 'exp' =>(time() + 60));
+        $payload = array('username' => $login, 'exp' =>(time() + 60));
         //Création du token
         $token = generate_jwt($headers, $payload);
 
@@ -107,6 +116,6 @@ function actionPostAuth($id, $password) {
 
 
 }
-*/
+
 
 ?>
