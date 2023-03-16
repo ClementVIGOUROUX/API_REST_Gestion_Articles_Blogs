@@ -39,10 +39,10 @@ $linkpdo = getConnection();
     $postedData = file_get_contents('php://input');
     $data = json_decode($postedData, true);
     /// Traitement
-    actionPost($data['phrase'], $linkpdo);
+    actionPost($data['datePublication'], $data['contenu'], $data['idUtilisateur'],  $linkpdo);
 
     /// Envoi de la réponse au Client
-    deliver_response(201, "Requete INSERT réussie", $data['phrase']);
+    deliver_response(201, "Requete INSERT réussie", $postedData);
     break;
     /// Cas de la méthode PUT
     case "PUT" :
