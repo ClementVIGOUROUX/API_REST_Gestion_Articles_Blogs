@@ -67,7 +67,7 @@ function actionGetArticlesByUser($idUtilisateur, $linkpdo) {
 
 
 function actionGet($linkpdo) {
-    $query = $linkpdo->query('SELECT * FROM article');
+    $query = $linkpdo->query('SELECT nomAuteur as "Auteur" , contenu  , datePublication as "Date de Publication" FROM article INNER JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur ORDER BY 3;');
 
     if ($query == false) {
         die('Erreur query dans la fonction actionGet');
@@ -149,6 +149,7 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
 
 
 }
+
 
 
 ?>
