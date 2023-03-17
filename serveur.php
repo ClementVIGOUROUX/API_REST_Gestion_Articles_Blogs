@@ -47,11 +47,11 @@ $user = json_decode($payload)->username;
             break ;
 
             case "publisher" :
-                $idUtilisateur = getIdByUsername($user) ;
-                $articles = actionGetArticlesByUser($idUtilisateur);
+                $idUtilisateur = getIdByUsername($user, $linkpdo) ;
+                $articles = actionGetArticlesByUser($idUtilisateur, $linkpdo);
 
                 if ($articles == null) {
-                    deliver_response(404, "L'utilisateur que vous recherchez n'existe pas ou n'écrit pas d'articles");
+                    deliver_response(404, "L'utilisateur que vous recherchez n'existe pas ou n'écrit pas d'articles", null);
                 }else {
                     deliver_response(200, "Requete GET By User réussie", $articles);
                 }
