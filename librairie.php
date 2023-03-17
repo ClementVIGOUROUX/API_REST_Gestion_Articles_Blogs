@@ -6,7 +6,7 @@ function getConnection() {
 
     $server="localhost";
     $login="root";
-    $mdp='$iutinfo';
+    $mdp='';
     $db ="db_articlesblogs";
 
     $linkpdo = '';
@@ -121,8 +121,19 @@ function actionDeleteById($id,$linkpdo) {
 //A faire pour le jeton
 
 function isValidUser($userlogin, $userpassword,  $linkpdo) {
-    $query = $linkpdo->query('SELECT u.motDePasse FROM utilisateur u WHERE login = '. $userlogin);
-    $row = $query->fetch();
+
+    //REQUETE = FALSE ???? REGLER LE PROBLEME 
+    $requete = $linkpdo->query('SELECT motDePasse FROM utilisateur WHERE userlogin ='. $userlogin);
+
+    echo $userlogin ;
+    echo $userpassword ;
+    if ($requete== false) {
+        die('Erreur query dans la fonction isValidUser');
+    }
+
+    $count = $requete->rowCount();
+    echo $count ;
+    $row = $requete->fetch();
     return ($row == $userpassword);
 }
 
