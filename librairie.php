@@ -66,8 +66,9 @@ function actionGetArticlesByUser($idUtilisateur, $linkpdo) {
 }
 
 
+#Permet de voir tout les articles (Auteur , contenu , date de Publication) pour une personne non authentifié 
 function actionGet($linkpdo) {
-    $query = $linkpdo->query('SELECT nomAuteur as "Auteur" , contenu  , datePublication as "Date de Publication" FROM article INNER JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur ORDER BY 3;');
+    $query = $linkpdo->query('SELECT nomAuteur as "Auteur" , contenu  , datePublication as "Date de Publication" FROM article INNER JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur ORDER BY 3');
 
     if ($query == false) {
         die('Erreur query dans la fonction actionGet');
@@ -150,6 +151,27 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
 
 }
 
+function actionGetArticlePublisher($linkpdo){
+    $query = $linkpdo->query('SELECT nomAuteur as "Auteur" , contenu  , datePublication as "Date de Publication",IdArticle FROM article INNER JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur ORDER BY 3');
+    if ($query == false) {
+        die('Erreur query dans la fonction actionGet');
+    }
 
+    while($donnees2 = $query->fetch(PDO::FETCH_ASSOC)) {
+        $articles[] = $donnees2;
+    }
+
+    foreach ($articles as $article){
+        $idArticle = $article['IdArticle'];
+        $query2 = $linkpdo->query('SELECT TypeLike , count(TypeLike) as "Nombre de Like" FROM aimer WHERE idArticle ='. $idArticle .' GROUP BY(TypeLike)');
+        while($donnees3 = $query2->fetch(PDO::FETCH_ASSOC)) {
+            $likes[] = $donnees3;
+        }
+
+    }
+    print_r($likes);
+    print_r($articles);
+    return $articles;
+}
 
 ?>
