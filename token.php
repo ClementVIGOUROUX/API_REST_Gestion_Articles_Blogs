@@ -1,5 +1,9 @@
 <?php
 
+    include('librairie.php');
+
+    include('jwt_utils.php');
+
     $linkpdo = getConnection();
 
     $postedData = file_get_contents('php://input');
