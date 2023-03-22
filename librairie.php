@@ -123,18 +123,18 @@ function actionDeleteById($id,$linkpdo) {
 function isValidUser($userlogin, $userpassword,  $linkpdo) {
 
     //REQUETE = FALSE ???? REGLER LE PROBLEME 
-    $requete = $linkpdo->query('SELECT motDePasse FROM utilisateur WHERE userlogin ='. $userlogin);
-
-    echo $userlogin ;
-    echo $userpassword ;
-    if ($requete== false) {
+    $requete = $linkpdo->prepare('SELECT motDePasse FROM utilisateur WHERE userlogin = ?');
+    $requete->execute([$userlogin]);
+    $password = $requete->fetch(); 
+    
+    //echo $userlogin ;
+    //echo $userpassword ;
+    if ($requete == false) {
         die('Erreur query dans la fonction isValidUser');
     }
 
-    $count = $requete->rowCount();
-    echo $count ;
-    $row = $requete->fetch();
-    return ($row == $userpassword);
+
+    return ($password[0] == $userpassword);
 }
 
 
@@ -145,8 +145,9 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
 
     if (isValidUser($userlogin, $userpassword, $linkpdo)) {
 
-        $query = $linkpdo->query('SELECT u.role FROM utilisateur u WHERE login = '. $userlogin);
-        $role = $query->fetch();
+        $requete = $linkpdo->prepare('SELECT motDePasse FROM utilisateur WHERE userlogin = ?');
+        $requete->execute([$userlogin]);
+        $role = $requete->fetch(); 
 
         $headers = array('alg' => 'HS256', 'typ' => 'JWT');
         $payload = array('username' => $userlogin, 'role' => $role, 'exp' =>(time() + 60));
@@ -155,11 +156,28 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
 
         return $token ;
 
+    } else {
+        echo "isValidUser renvoie faux";
     }
 
 
 
 }
+
+
+/// Envoi de la réponse au Client
+function deliver_response($status, $status_message, $data){
+    /// Paramétrage de l'entête HTTP, suite
+    header("HTTP/1.1 $status $status_message");
+    /// Paramétrage de la réponse retournée
+    $response['status'] = $status;
+    $response['status_message'] = $status_message;
+    $response['data'] = $data;
+    /// Mapping de la réponse au format JSON
+    $json_response = json_encode($response);
+    echo $json_response;
+}
+
 
 
 
