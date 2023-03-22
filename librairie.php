@@ -119,17 +119,12 @@ function actionDeleteById($id,$linkpdo) {
 
 }
 
-//A faire pour le jeton
-
 function isValidUser($userlogin, $userpassword,  $linkpdo) {
-
-    //REQUETE = FALSE ???? REGLER LE PROBLEME 
+ 
     $requete = $linkpdo->prepare('SELECT motDePasse FROM utilisateur WHERE userlogin = ?');
     $requete->execute([$userlogin]);
     $password = $requete->fetch(); 
     
-    //echo $userlogin ;
-    //echo $userpassword ;
     if ($requete == false) {
         die('Erreur query dans la fonction isValidUser');
     }
