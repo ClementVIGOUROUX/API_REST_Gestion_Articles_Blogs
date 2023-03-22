@@ -158,7 +158,7 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
         return $token ;
 
     } else {
-        echo "isValidUser renvoie faux";
+        return FALSE;
     }
 
 
@@ -193,7 +193,6 @@ function actionGetArticlePublisher($linkpdo){
 
 
 
-/// Envoi de la réponse au Client
 function deliver_response($status, $status_message, $data){
     /// Paramétrage de l'entête HTTP, suite
     header("HTTP/1.1 $status $status_message");

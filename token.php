@@ -17,12 +17,16 @@
 
         $token = actionPostAuth($data['userlogin'], $data['motDePasse'], $linkpdo);
 
-
-        if (is_jwt_valid($token) == TRUE) {
+        if ($token == FALSE) {
+            deliver_response(401, "Authentification echouee, votre login ou mot de passe est incorrect", null);
+        } else if (is_jwt_valid($token) == TRUE){
             echo $token ;
+
         } else {
-            deliver_response(401, "Authentification echoué, votre login ou mot de passe est incorrect", null);
+            deliver_response(401, "Authentification echouee, erreur dans le token", null);
         }
+
+       
     
     }
 
