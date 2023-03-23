@@ -14,7 +14,6 @@
     if ($data == null) {
         echo "Connexion non authentifiée acceptée";
     }else {
-
         $token = actionPostAuth($data['userlogin'], $data['motDePasse'], $linkpdo);
 
         if ($token == FALSE) {

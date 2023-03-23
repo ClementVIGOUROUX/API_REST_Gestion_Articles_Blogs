@@ -128,9 +128,7 @@ function isValidUser($userlogin, $userpassword,  $linkpdo) {
     if ($requete == false) {
         die('Erreur query dans la fonction isValidUser');
     }
-
-
-    return ($password[0] == $userpassword);
+    return (password_verify($userpassword, $password[0]));
 }
 
 
@@ -141,7 +139,7 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
 
     if (isValidUser($userlogin, $userpassword, $linkpdo)) {
 
-        $requete = $linkpdo->prepare('SELECT motDePasse FROM utilisateur WHERE userlogin = ?');
+        $requete = $linkpdo->prepare('SELECT userrole FROM utilisateur WHERE userlogin = ?');
         $requete->execute([$userlogin]);
         $role = $requete->fetch(); 
 
