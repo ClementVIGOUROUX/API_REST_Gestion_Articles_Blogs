@@ -35,7 +35,7 @@ function getIdByUsername($username, $linkpdo) {
 
 }
 
-
+#pas utile
 function actionGetById($idArticle,$linkpdo) {
     $query = $linkpdo->query('SELECT * FROM article WHERE idArticle ='. $idArticle);
 
@@ -50,7 +50,7 @@ function actionGetById($idArticle,$linkpdo) {
 
 }
 
-
+#pas utile
 function actionGetArticlesByUser($idUtilisateur, $linkpdo) {
     $query = $linkpdo->query('SELECT * FROM article WHERE idUtilisateur ='. $idUtilisateur);
 
@@ -110,34 +110,13 @@ function actionPutById($id, $contenu,  $linkpdo) {
 
 
 function actionDeleteById($id,$linkpdo) {
-    $query = $linkpdo->query('DELETE FROM aimer WHERE idArticle ='. $id);
-    $query2 = $linkpdo->query('DELETE FROM article WHERE idArticle ='. $id);
-
-    if ($query == false || $query2 == false) {
-        die('Erreur prepare dans la fonction actionDeleteById');
-    } 
-
-    return($query2->rowCount() > 0 ) ;
-    
-}
-
-
-
-function isUserAuthor($idArticle, $user, $linkpdo) {
-    $query = $linkpdo->prepare('SELECT u.userlogin FROM utilisateur u JOIN article a on u.idUtilisateur = a.idUtilisateur WHERE a.idArticle = ?');
-    $query->execute([$idArticle]);
-    $author = $query->fetch();
+    $query = $linkpdo->query('DELETE FROM article WHERE idArticle ='. $id);
 
     if ($query == false) {
-        die('Erreur query dans la fonction isUserAuthor');
+        die('Erreur prepare dans la fonction actionDeleteById');
     }
 
-    if ($author == false) {
-        return ('Article not found');
-    }else {
-        return ($user == $author[0]);
-    }
-    
+
 
 }
 
@@ -198,8 +177,6 @@ function actionGetArticlePublisher($linkpdo){
         }
 
     }
-    print_r($likes);
-    print_r($articles);
     return $articles;
 }
 
@@ -265,11 +242,41 @@ function getLikeModerateur($linkpdo , $article){
     return $article ;
 }
 
+function actionGetMesArticles($linkpdo,$user) {
+    $query = $linkpdo->query("SELECT  idArticle ,  nomAuteur as 'Auteur' , contenu  , datePublication as 'Date de Publication' FROM article JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur And utilisateur.userlogin = '$user' ORDER BY 3;");
+
+    if ($query == false) {
+        die('Erreur query dans la fonction actionGet');
+    }
+
+    while($donnees5 = $query->fetch(PDO::FETCH_ASSOC)) {
+        $articles[] = $donnees5;
+    }
+    return $articles ;
+
+}
+
+function actionPostLikeArticle($like, $idUtilisateur,$idArticle,$linkpdo) {
+    $query = $linkpdo->prepare('INSERT INTO aimer (idArticle, idUtilisateur, TypeLike) VALUES (:idArticle, :idUtilisateur, :Typelike)');
+    
+    if ($query == false) {
+        die('Erreur prepare dans la fonction actionPost');
+    }
+
+    $query->bindValue(':idArticle', $idArticle );
+    $query->bindValue(':idUtilisateur', $idUtilisateur);
+    $query->bindValue(':Typelike', $like);
+    
+    $query->execute();
+}
+
+
 /*
-$linkpdo = getConnection();
-$a = actionGet($linkpdo);
+
+$user = "VGC";  
+$a = actionGetMesArticles($linkpdo,$user);
 $b = getLikePublisher($linkpdo,$a);
-print_r(getLikeModerateur($linkpdo,$b));
+print_r($b);
 */
 
 ?>
