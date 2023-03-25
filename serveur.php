@@ -16,13 +16,17 @@ $payload = base64_decode($tokenParts[1]);
 $role = json_decode($payload)->role;
 $user = json_decode($payload)->username;
 
+
+$role_string = $role->userrole ;
+
+
  /// Identification du type de méthode HTTP envoyée par le client
  $http_method = $_SERVER['REQUEST_METHOD'];
  switch ($http_method){
     /// Cas de la méthode GET
     case "GET" :
 
-        switch($role) {
+        switch($role_string) {
 
             case "moderator" : 
                 /// Récupération des critères de recherche envoyés par le Client
@@ -95,13 +99,49 @@ $user = json_decode($payload)->username;
     break;
     /// Cas de la méthode DELETE
     case "DELETE" :
-    /// Récupération de l'identifiant de la ressource envoyé par le Client
-    if (!empty($_GET['id'])){
-        actionDeleteById($_GET['id'], $linkpdo);
-    }
-    /// Envoi de la réponse au Client
-    deliver_response(200, "Votre message", $_GET['id']);
-    break;
+
+        switch($role_string) {
+
+            case "moderator" : 
+                /// Récupération des critères de recherche envoyés par le Client
+                if (!empty($_GET['idArticle'])){
+                    $resultat = actionDeleteById($_GET['idArticle'], $linkpdo);
+                } else {
+                    $resultat = null;
+                }
+                
+                if ($resultat == null || $resultat == false) {
+                    deliver_response(404, "L'article que vous recherchez n'existe pas", $resultat);
+                } else {
+                    /// Envoi de la réponse au Client
+                    deliver_response(200, "Requete DELETE reussie", $resultat);
+                }
+            break ;
+
+            case "publisher" :
+                /// Récupération des critères de recherche envoyés par le Client
+                if (!empty($_GET['idArticle'])){
+                    if (isUserAuthor($_GET['idArticle'], $user, $linkpdo)) {
+                        $resultat = actionDeleteById($_GET['idArticle'], $linkpdo);
+                    } else {
+                        deliver_response(403, "L'article que vous souhaitez supprimer ne vous appartient pas", null);
+                    }
+                } else {
+                    $resultat = null;
+                }
+
+                if ($resultat == null) {
+                    deliver_response(404, "L'article que vous recherchez n'existe pas", null);
+                } else {
+                    /// Envoi de la réponse au Client
+                    deliver_response(200, "Requete DELETE réussie", $resultat);
+                }
+
+            break ;
+        }
+        break ;
+
+        
     default :
 
 }

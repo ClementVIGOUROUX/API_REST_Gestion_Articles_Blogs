@@ -6,7 +6,7 @@ function getConnection() {
 
     $server="localhost";
     $login="root";
-    $mdp='$iutinfo';
+    $mdp='';
     $db ="db_articlesblogs";
 
     $linkpdo = '';
@@ -110,13 +110,28 @@ function actionPutById($id, $contenu,  $linkpdo) {
 
 
 function actionDeleteById($id,$linkpdo) {
-    $query = $linkpdo->query('DELETE FROM article WHERE idArticle ='. $id);
+    $query = $linkpdo->query('DELETE FROM aimer WHERE idArticle ='. $id);
+    $query2 = $linkpdo->query('DELETE FROM article WHERE idArticle ='. $id);
+
+    if ($query == false || $query2 == false) {
+        die('Erreur prepare dans la fonction actionDeleteById');
+    } 
+
+    return($query2->rowCount() > 0 ) ;
+    
+}
+
+
+
+function isUserAuthor($idArticle, $user, $linkpdo) {
+    $query = $linkpdo->prepare('SELECT u.userlogin FROM utilisateur u JOIN article a WHERE a.idArticle = ?');
+    $query->execute([$idArticle]);
+    $author = $query->fetch();
 
     if ($query == false) {
-        die('Erreur prepare dans la fonction actionDeleteById');
+        die('Erreur query dans la fonction isUserAuthor');
     }
-
-
+    return ($user == $author);
 
 }
 
@@ -244,11 +259,11 @@ function getLikeModerateur($linkpdo , $article){
     return $article ;
 }
 
-
+/*
 $linkpdo = getConnection();
 $a = actionGet($linkpdo);
 $b = getLikePublisher($linkpdo,$a);
 print_r(getLikeModerateur($linkpdo,$b));
-
+*/
 
 ?>
