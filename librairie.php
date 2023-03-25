@@ -6,7 +6,7 @@ function getConnection() {
 
     $server="localhost";
     $login="root";
-    $mdp='';
+    $mdp='$iutinfo';
     $db ="db_articlesblogs";
 
     $linkpdo = '';
@@ -22,6 +22,7 @@ function getConnection() {
 
 }
 
+#pas utile
 function getIdByUsername($username, $linkpdo) {
     $query = $linkpdo->query('SELECT idUtilisateur FROM utilisateur WHERE login = ' . $username);
 
@@ -68,7 +69,7 @@ function actionGetArticlesByUser($idUtilisateur, $linkpdo) {
 
 #Permet de voir tout les articles (Auteur , contenu , date de Publication) pour une personne non authentifié 
 function actionGet($linkpdo) {
-    $query = $linkpdo->query('SELECT nomAuteur as "Auteur" , contenu  , datePublication as "Date de Publication" FROM article INNER JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur ORDER BY 3');
+    $query = $linkpdo->query('SELECT  idArticle ,  nomAuteur as "Auteur" , contenu  , datePublication as "Date de Publication" FROM article INNER JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur ORDER BY 3');
 
     if ($query == false) {
         die('Erreur query dans la fonction actionGet');
@@ -197,4 +198,30 @@ function deliver_response($status, $status_message, $data){
     $json_response = json_encode($response);
     echo $json_response;
 }
+
+
+function getLike($linkpdo , $article){
+    foreach ($article as $art){
+        $query = $linkpdo->query('SELECT idArticle,TypeLike , COUNT(TypeLike) from aimer where idArticle='. $art['idArticle'].' GROUP By(`TypeLike`);');
+        if ($query == false) {
+            die('Erreur query dans la fonction getLike');
+        }
+        while($donnees3 = $query->fetch(PDO::FETCH_ASSOC)) {
+            $likes[] = $donnees3;
+        }
+    }
+    for ($i = 0 ,$size = count($article); $i < $size ; $i++) {
+        for ($j = 0 ,$sizeLike = count($likes); $j < $sizeLike ; $j++) {
+            if($article[$i]['idArticle']==$likes[$j]['idArticle'])
+                array_push($article[$i],$likes[$j]);
+       }
+    }
+    return $article ;
+}
+$linkpdo = getConnection();
+$a = actionGet($linkpdo);
+print_r(getLike($linkpdo,$a));
+
+
+
 ?>
