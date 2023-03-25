@@ -124,14 +124,20 @@ function actionDeleteById($id,$linkpdo) {
 
 
 function isUserAuthor($idArticle, $user, $linkpdo) {
-    $query = $linkpdo->prepare('SELECT u.userlogin FROM utilisateur u JOIN article a WHERE a.idArticle = ?');
+    $query = $linkpdo->prepare('SELECT u.userlogin FROM utilisateur u JOIN article a on u.idUtilisateur = a.idUtilisateur WHERE a.idArticle = ?');
     $query->execute([$idArticle]);
     $author = $query->fetch();
 
     if ($query == false) {
         die('Erreur query dans la fonction isUserAuthor');
     }
-    return ($user == $author);
+
+    if ($author == false) {
+        return ('Article not found');
+    }else {
+        return ($user == $author[0]);
+    }
+    
 
 }
 

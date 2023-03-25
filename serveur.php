@@ -110,10 +110,11 @@ $role_string = $role->userrole ;
                     $resultat = null;
                 }
                 
-                if ($resultat == null || $resultat == false) {
+                if ($resultat == null) {
+                    deliver_response(400, "Aucun id d'article n'a ete renseigne", $resultat);
+                } else if ($resultat == false){
                     deliver_response(404, "L'article que vous recherchez n'existe pas", $resultat);
-                } else {
-                    /// Envoi de la réponse au Client
+                }else {
                     deliver_response(200, "Requete DELETE reussie", $resultat);
                 }
             break ;
@@ -121,20 +122,24 @@ $role_string = $role->userrole ;
             case "publisher" :
                 /// Récupération des critères de recherche envoyés par le Client
                 if (!empty($_GET['idArticle'])){
-                    if (isUserAuthor($_GET['idArticle'], $user, $linkpdo)) {
+                    if (isUserAuthor($_GET['idArticle'], $user, $linkpdo) == TRUE) {
                         $resultat = actionDeleteById($_GET['idArticle'], $linkpdo);
                     } else {
-                        deliver_response(403, "L'article que vous souhaitez supprimer ne vous appartient pas", null);
+                        echo "efefz";
+                        $resultat = isUserAuthor($_GET['idArticle'], $user, $linkpdo) ;
                     }
                 } else {
                     $resultat = null;
                 }
 
-                if ($resultat == null) {
-                    deliver_response(404, "L'article que vous recherchez n'existe pas", null);
-                } else {
-                    /// Envoi de la réponse au Client
-                    deliver_response(200, "Requete DELETE réussie", $resultat);
+                if ($resultat === null) {
+                    deliver_response(400, "Aucun id d'article n'a ete renseigne", $resultat);
+                } else if ($resultat == 'Article not found'){
+                    deliver_response(404, "L'article que vous recherchez n'existe pas", $resultat);
+                }else if ($resultat === false) {
+                    deliver_response(403, "L'article que vous souhaitez supprimer ne vous appartient pas", $resultat);
+                }else {
+                    deliver_response(200, "Requete DELETE reussie", $resultat);
                 }
 
             break ;
