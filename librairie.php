@@ -200,7 +200,7 @@ function deliver_response($status, $status_message, $data){
 }
 
 
-function getLike($linkpdo , $article){
+function getLikePublisher($linkpdo , $article){
     foreach ($article as $art){
         $query = $linkpdo->query('SELECT idArticle,TypeLike , COUNT(TypeLike) from aimer where idArticle='. $art['idArticle'].' GROUP By(`TypeLike`);');
         if ($query == false) {
@@ -218,10 +218,37 @@ function getLike($linkpdo , $article){
     }
     return $article ;
 }
+
+
+function getLikeModerateur($linkpdo , $article){
+    foreach ($article as $art){
+        $query = $linkpdo->query('SELECT nomAuteur , idArticle,TypeLike from aimer join utilisateur on utilisateur.idUtilisateur = aimer.idUtilisateur where idArticle='. $art['idArticle'].' GROUP By(aimer.idUtilisateur);');
+        if ($query == false) {
+            die('Erreur query dans la fonction getLike');
+        }
+        while($donnees4 = $query->fetch(PDO::FETCH_ASSOC)) {
+            $likes[] = $donnees4;
+        }
+    }
+    for ($i = 0 ,$size = count($article); $i < $size ; $i++) {
+        for ($j = 0 ,$sizeLike = count($likes); $j < $sizeLike ; $j++) {
+            if($article[$i]['idArticle']==$likes[$j]['idArticle']){
+                if($article[$i][0]['TypeLike']==$likes[$j]['TypeLike']){
+                    array_push($article[$i][0],$likes[$j]['nomAuteur']);
+                }elseif($article[$i][1]['TypeLike']==$likes[$j]['TypeLike']){
+                    array_push($article[$i][1],$likes[$j]['nomAuteur']);
+                }
+            }
+        }
+    }
+    return $article ;
+}
+
+
 $linkpdo = getConnection();
 $a = actionGet($linkpdo);
-print_r(getLike($linkpdo,$a));
-
+$b = getLikePublisher($linkpdo,$a);
+print_r(getLikeModerateur($linkpdo,$b));
 
 
 ?>
