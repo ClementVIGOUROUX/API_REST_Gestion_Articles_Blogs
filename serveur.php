@@ -137,11 +137,10 @@ $role_string = $role->userrole ;
             case "publisher" :
                 /// Récupération des critères de recherche envoyés par le Client
                 if (!empty($_GET['idArticle'])){
-                    if (isUserAuthor($_GET['idArticle'], $user, $linkpdo) == TRUE) {
+                    if (isUserAuthor($_GET['idArticle'], $user, $linkpdo) == true) {
                         $resultat = actionDeleteById($_GET['idArticle'], $linkpdo);
                     } else {
-                        echo "efefz";
-                        $resultat = isUserAuthor($_GET['idArticle'], $user, $linkpdo) ;
+                        $resultat = false ;
                     }
                 } else {
                     $resultat = null;
@@ -149,8 +148,6 @@ $role_string = $role->userrole ;
 
                 if ($resultat === null) {
                     deliver_response(400, "Aucun id d'article n'a ete renseigne", $resultat);
-                } else if ($resultat == 'Article not found'){
-                    deliver_response(404, "L'article que vous recherchez n'existe pas", $resultat);
                 }else if ($resultat === false) {
                     deliver_response(403, "L'article que vous souhaitez supprimer ne vous appartient pas", $resultat);
                 }else {

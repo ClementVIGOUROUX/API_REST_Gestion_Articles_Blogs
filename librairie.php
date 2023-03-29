@@ -132,6 +132,12 @@ function isUserAuthor($idArticle, $user, $linkpdo) {
     if ($query == false) {
         die('Erreur prepare dans la fonction actionDeleteById');
     }
+    if ($author == false) {
+        die('Article not found');
+    }else {
+        return ($author[0] == $user) ;
+    }
+    
 
 
 
