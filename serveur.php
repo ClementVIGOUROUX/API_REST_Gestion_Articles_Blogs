@@ -71,20 +71,22 @@ $iduser = getIdByUser($user,$linkpdo);
     /// Récupération des données envoyées par le Client
         $postedData = file_get_contents('php://input');
         $data = json_decode($postedData, true);
-        if ($role == 'publisher') {
-            if (!empty($data['TypeLike'])){
+        if ($role_string == 'publisher') {
+            if (!empty($data['idArticle'])){
                 actionPostLikeArticle($data['TypeLike'],$iduser,$data['idArticle'],$linkpdo);
-                deliver_response(201, "Requete INSERT réussie", $data['TypeLike']);
-            }else{
+                deliver_response(201, "Requete INSERT LIKE réussie", $data['TypeLike']);
+            }else if (!empty($data['contenu'])){
             /// Traitement
-            actionPost($data['contenu'], $data['idUtilisateur'],  $linkpdo);
+            actionPost($data['contenu'], $iduser,  $linkpdo);
 
             /// Envoi de la réponse au Client
-            deliver_response(201, "Requete INSERT réussie", $data['contenu']);
+            deliver_response(201, "Requete INSERT ARTICLE réussie", $data['contenu']);
+            }else {
+                deliver_response(400, "Requete mal formulée", null);
             }
             
         }else {
-            deliver_response(401, "Requete INSERT non authorisée", null );
+            deliver_response(401, "Vous ne pouvez pas publier d'article sans avoir le rôle publisher", null );
         }
     
         break;
