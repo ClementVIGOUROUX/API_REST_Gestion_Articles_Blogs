@@ -130,7 +130,7 @@ function isUserAuthor($idArticle, $user, $linkpdo) {
     $author = $query->fetch();
 
     if ($query == false) {
-        die('Erreur prepare dans la fonction actionDeleteById');
+        die('Erreur prepare dans la fonction isUserAuthor');
     }
     if ($author == false) {
         die('Article not found');
@@ -166,6 +166,7 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
         $requete = $linkpdo->prepare('SELECT userrole FROM utilisateur WHERE userlogin = ?');
         $requete->execute([$userlogin]);
         $role = $requete->fetch(); 
+        echo $role ;
 
         $headers = array('alg' => 'HS256', 'typ' => 'JWT');
         $payload = array('username' => $userlogin, 'role' => $role, 'exp' =>(time() + 60));
@@ -291,6 +292,24 @@ function actionPostLikeArticle($like, $idUtilisateur,$idArticle,$linkpdo) {
     $query->bindValue(':Typelike', $like);
     
     $query->execute();
+}
+
+
+
+function getIdByUser($username, $linkpdo) {
+    $query = $linkpdo->prepare('SELECT u.idUtilisateur FROM utilisateur u  WHERE u.userlogin = ?');
+    $query->execute([$username]);
+    $idUser = $query->fetch();
+
+    if ($query == false) {
+        die('Erreur prepare dans la fonction actionDeleteById');
+    }
+
+    if ($idUser == false) {
+        die('User not found');
+    }else {
+        return $idUser[0];
+    }
 }
 
 

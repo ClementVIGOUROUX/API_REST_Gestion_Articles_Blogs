@@ -13,11 +13,14 @@ $token = get_bearer_token() ;
 $tokenParts = explode('.', $token);
 $payload = base64_decode($tokenParts[1]);
 
+
 $role = json_decode($payload)->role;
-$user = json_decode($payload)->username;
-
-
 $role_string = $role->userrole ;
+$user = json_decode($payload)->username;
+$iduser = getIdByUser($user,$linkpdo);
+
+
+
 
 
  /// Identification du type de méthode HTTP envoyée par le client
@@ -83,7 +86,7 @@ $role_string = $role->userrole ;
         $data = json_decode($postedData, true);
         if ($role == 'publisher') {
             if (!empty($data['TypeLike'])){
-                actionPostLikeArticle($data['TypeLike'],$date['idUtilisateur'],$date['idArticle'],$linkpdo);
+                actionPostLikeArticle($data['TypeLike'],$iduser,$data['idArticle'],$linkpdo);
                 deliver_response(201, "Requete INSERT réussie", $data['TypeLike']);
             }else{
             /// Traitement
