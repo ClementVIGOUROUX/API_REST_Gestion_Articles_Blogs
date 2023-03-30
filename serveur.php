@@ -29,14 +29,9 @@ $role_string = $role->userrole ;
         switch($role_string) {
 
             case "moderator" : 
-                /// Récupération des critères de recherche envoyés par le Client
-                //if (!empty($_GET['idArticle'])){
-                    ///$resultat = actionGetById($_GET['idArticle'], $linkpdo);
-                    //$articleByUser = actionGetArticlesByUser($_GET['idArticle'], $linkpdo);
-                    //$resultat =  getLikeModerateur($articleByUser,$linkpdo);
-                //} else {
-                    $allArticle = actionGet($linkpdo);
-                    $resultat = getLikeModerateur($allArticle,$linkpdo);
+                    $articles = actionGet($linkpdo);
+                    $articles2 = getLikePublisher($linkpdo,$articles);
+                    $resultat =getLikeModerateur($linkpdo,$articles2);
                 //}
 
                 if ($resultat == null) {
@@ -47,22 +42,14 @@ $role_string = $role->userrole ;
                 }
                 break;
 
-            case "publisher" :
-                //$idUtilisateur = getIdByUsername($user, $linkpdo) ;
-                //$articles = actionGetArticlesByUser($idUtilisateur, $linkpdo);
-                if (!empty($_GET['userlogin']/**probleme ici a resoudre **/)){
-                        $mesArticles = actionGetArticlesByUser($user,$linkpdo);
-                        $articles = getLikePublisher($mesArticles,$linkpdo);
-                }else{
-                    $allArticleUtilisateur = actionGet($linkpdo);
-                    $articles = getLikePublisher($allArticleUtilisateur,$linkpdo);
-                }
+            case "publisher" : 
+                $articleP = actionGet($linkpdo);
+                $resultatP = getLikePublisher($linkpdo,$articleP);
                 
-
-                if ($articles == null) {
+                if ($resultatP == null) {
                     deliver_response(404, "L'utilisateur que vous recherchez n'existe pas ou n'écrit pas d'articles", null);
                 }else {
-                    deliver_response(200, "Requete GET By User réussie", $articles);
+                    deliver_response(200, "Requete GET By User réussie", $resultatP);
                 }
                 break;
 
