@@ -224,11 +224,16 @@ function deliver_response($status, $status_message, $data){
 
 function getLikePublisher($linkpdo , $article){
     foreach ($article as $art){
-        $query = $linkpdo->query('SELECT idArticle,TypeLike , COUNT(TypeLike) from aimer where idArticle='. $art['idArticle'].' GROUP By(`TypeLike`);');
+        $query = $linkpdo->query('SELECT idArticle,TypeLike , COUNT(TypeLike) as "Nombre" from aimer where idArticle='. $art['idArticle'].' GROUP By(`TypeLike`);');
         if ($query == false) {
-            die('Erreur query dans la fonction getLike');
+            die('Erreur query dans la fonction getLikePublisher');
         }
         while($donnees3 = $query->fetch(PDO::FETCH_ASSOC)) {
+            if($donnees3['TypeLike'] == 0){
+                $donnees3['TypeLike'] = 'dislike';
+            } else {
+                $donnees3['TypeLike'] = 'like';
+            }
             $likes[] = $donnees3;
         }
     }
@@ -244,9 +249,9 @@ function getLikePublisher($linkpdo , $article){
 
 function getLikeModerateur($linkpdo , $article){
     foreach ($article as $art){
-        $query = $linkpdo->query('SELECT nomAuteur , idArticle,TypeLike from aimer join utilisateur on utilisateur.idUtilisateur = aimer.idUtilisateur where idArticle='. $art['idArticle'].' GROUP By(aimer.idUtilisateur);');
+        $query = $linkpdo->query('SELECT nomAuteur , idArticle, CASE When TypeLike = "0" Then "dislike"else "like"END as TypeLike from aimer join utilisateur on utilisateur.idUtilisateur = aimer.idUtilisateur where idArticle='. $art['idArticle'].' GROUP By(aimer.idUtilisateur);');
         if ($query == false) {
-            die('Erreur query dans la fonction getLike');
+            die('Erreur query dans la fonction getLikeModerateur');
         }
         while($donnees4 = $query->fetch(PDO::FETCH_ASSOC)) {
             $likes[] = $donnees4;
@@ -262,6 +267,8 @@ function getLikeModerateur($linkpdo , $article){
                 }
             }
         }
+        unset($article[$i][0]['idArticle']);
+        unset($article[$i][1]['idArticle']);
     }
     return $article ;
 }
@@ -284,7 +291,7 @@ function actionPostLikeArticle($like, $idUtilisateur,$idArticle,$linkpdo) {
     $query = $linkpdo->prepare('INSERT INTO aimer (idArticle, idUtilisateur, TypeLike) VALUES (:idArticle, :idUtilisateur, :Typelike)');
     
     if ($query == false) {
-        die('Erreur prepare dans la fonction actionPost');
+        die('Erreur prepare dans la fonction actionPostArticle');
     }
 
     $query->bindValue(':idArticle', $idArticle );
