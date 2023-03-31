@@ -10,14 +10,21 @@ $linkpdo = getConnection();
 
 $token = get_bearer_token() ;
 
-$tokenParts = explode('.', $token);
-$payload = base64_decode($tokenParts[1]);
+if ($token != null) {
+    $tokenParts = explode('.', $token);
+    $payload = base64_decode($tokenParts[1]);
+    
+    
+    $role = json_decode($payload)->role;
+    $role_string = $role->userrole ;
+    $user = json_decode($payload)->username;
+    $iduser = getIdByUser($user,$linkpdo);
+}else {
+    $role_string = 'nonauthentifie' ;
+
+}
 
 
-$role = json_decode($payload)->role;
-$role_string = $role->userrole ;
-$user = json_decode($payload)->username;
-$iduser = getIdByUser($user,$linkpdo);
 
 
 
@@ -38,7 +45,7 @@ $iduser = getIdByUser($user,$linkpdo);
                 //}
 
                 if ($resultat == null) {
-                    deliver_response(404, "L'article que vous recherchez n'existe pas", null);
+                    deliver_response(404, "Aucun article n'a été trouvé", null);
                 } else {
                     /// Envoi de la réponse au Client
                     deliver_response(200, "Requete GET réussie", $resultat);
@@ -50,18 +57,18 @@ $iduser = getIdByUser($user,$linkpdo);
                 $resultatP = getLikePublisher($linkpdo,$articleP);
                 
                 if ($resultatP == null) {
-                    deliver_response(404, "L'utilisateur que vous recherchez n'existe pas ou n'écrit pas d'articles", null);
+                    deliver_response(404, "Aucun article n'a été trouvé", null);
                 }else {
-                    deliver_response(200, "Requete GET By User réussie", $resultatP);
+                    deliver_response(200, "Requete GET réussie", $resultatP);
                 }
                 break;
 
-            default :
+            case "nonauthentifie" :
                 $article = actionGet($linkpdo);
                 if ($article == null) {
-                    deliver_response(404, "L'utilisateur que vous recherchez n'existe pas ou n'écrit pas d'articles", null);
+                    deliver_response(404, "Aucun article n'a été trouvé", null);
                 }else {
-                    deliver_response(200, "Requete GET réussie", $articles);
+                    deliver_response(200, "Requete GET réussie", $article);
                 }
         }
     
