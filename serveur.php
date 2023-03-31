@@ -53,13 +53,21 @@ if ($token != null) {
                 break;
 
             case "publisher" : 
-                $articleP = actionGet($linkpdo);
-                $resultatP = getLikePublisher($linkpdo,$articleP);
+                $postedData = file_get_contents('php://input');
+                $data = json_decode($postedData, true);
+
+                if (!empty($data['isAuthor']) && $data['isAuthor'] == true) {
+                    $resultat = actionGetMesArticles($linkpdo,$user);
+                }else {
+                    $articleP = actionGet($linkpdo);
+                    $resultat = getLikePublisher($linkpdo,$articleP);
+                }
                 
-                if ($resultatP == null) {
+                
+                if ($resultat == null) {
                     deliver_response(404, "Aucun article n'a été trouvé", null);
                 }else {
-                    deliver_response(200, "Requete GET réussie", $resultatP);
+                    deliver_response(200, "Requete GET réussie", $resultat);
                 }
                 break;
 
