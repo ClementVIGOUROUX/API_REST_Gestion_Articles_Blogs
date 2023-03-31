@@ -57,7 +57,8 @@ if ($token != null) {
                 $data = json_decode($postedData, true);
 
                 if (!empty($data['isAuthor']) && $data['isAuthor'] == true) {
-                    $resultat = actionGetMesArticles($linkpdo,$user);
+                    $articleM = actionGetMesArticles($linkpdo,$user);
+                    $resultat = getLikePublisher($linkpdo,$articleM);
                 }else {
                     $articleP = actionGet($linkpdo);
                     $resultat = getLikePublisher($linkpdo,$articleP);
