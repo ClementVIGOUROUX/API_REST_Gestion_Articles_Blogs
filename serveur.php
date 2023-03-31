@@ -86,7 +86,7 @@ $iduser = getIdByUser($user,$linkpdo);
             }
             
         }else {
-            deliver_response(401, "Vous ne pouvez pas publier d'article sans avoir le rôle publisher", null );
+            deliver_response(401, "Vous ne pouvez pas publier d'article sans avoir le rôle publisher", null);
         }
     
         break;
@@ -95,13 +95,18 @@ $iduser = getIdByUser($user,$linkpdo);
     /// Récupération des données envoyées par le Client
         $postedData = file_get_contents('php://input');
         $data = json_decode($postedData, true);
-        var_dump($data);
     /// Traitement
-    if ($role == 'publisher') {
-        actionPutById($data['id'], $data['phrase'], $linkpdo);
-    
-    /// Envoi de la réponse au Client
-        deliver_response(200, "Votre message", NULL);
+    if ($role_string == 'publisher') {
+
+        if (!empty($data['idArticle']) && !empty($data['contenu'])) {
+            actionPutById($data['idArticle'], $data['contenu'], $linkpdo);
+            deliver_response(200, "L'article a bien été modifié", $data['contenu']);
+        }else {
+            deliver_response(400, "Requete mal formulée", null);
+        }
+        
+    }else {
+        deliver_response(401, "Vous ne pouvez pas modifier d'article sans avoir le rôle publisher", null) ;
     }
     break;
     /// Cas de la méthode DELETE
