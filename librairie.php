@@ -22,49 +22,6 @@ function getConnection() {
 
 }
 
-#pas utile
-function getIdByUsername($username, $linkpdo) {
-    $query = $linkpdo->query('SELECT idUtilisateur FROM utilisateur WHERE login = ' . $username);
-
-    if ($query == false) {
-        die('Erreur query dans la fonction getIdByUsername');
-    }
-
-    $id = $query->fetch();
-    return $id ;
-
-}
-
-#pas utile
-function actionGetById($idArticle,$linkpdo) {
-    $query = $linkpdo->query('SELECT * FROM article WHERE idArticle ='. $idArticle);
-
-    if ($query == false) {
-        die('Erreur query dans la fonction actionGetById');
-    }
-
-    while($donnees = $query->fetch(PDO::FETCH_ASSOC)) {
-        $articles[] = $donnees;
-    }
-    return $articles ;
-
-}
-
-#pas utile
-function actionGetArticlesByUser($idUtilisateur, $linkpdo) {
-    $query = $linkpdo->query('SELECT * FROM article WHERE idUtilisateur ='. $idUtilisateur);
-
-
-    if ($query == false) {
-        die('Erreur query dans la fonction actionGetArticlesByUser');
-    }
-
-    while($donnees = $query->fetch(PDO::FETCH_ASSOC)) {
-        $articles[] = $donnees;
-    }
-    return $articles ;
-
-}
 
 
 #Permet de voir tout les articles (Auteur , contenu , date de Publication) pour une personne non authentifié 
@@ -183,43 +140,6 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
 
 }
 
-function actionGetArticlePublisher($linkpdo){
-    $query = $linkpdo->query('SELECT nomAuteur as "Auteur" , contenu  , datePublication as "Date de Publication",IdArticle FROM article INNER JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur ORDER BY 3');
-    if ($query == false) {
-        die('Erreur query dans la fonction actionGet');
-    }
-
-    while($donnees2 = $query->fetch(PDO::FETCH_ASSOC)) {
-        $articles[] = $donnees2;
-    }
-
-    foreach ($articles as $article){
-        $idArticle = $article['IdArticle'];
-        $query2 = $linkpdo->query('SELECT TypeLike , count(TypeLike) as "Nombre de Like" FROM aimer WHERE idArticle ='. $idArticle .' GROUP BY(TypeLike)');
-        while($donnees3 = $query2->fetch(PDO::FETCH_ASSOC)) {
-            $likes[] = $donnees3;
-        }
-
-    }
-    return $articles;
-}
-
-
-
-
-
-
-function deliver_response($status, $status_message, $data){
-    /// Paramétrage de l'entête HTTP, suite
-    header("HTTP/1.1 $status $status_message");
-    /// Paramétrage de la réponse retournée
-    $response['status'] = $status;
-    $response['status_message'] = $status_message;
-    $response['data'] = $data;
-    /// Mapping de la réponse au format JSON
-    $json_response = json_encode($response);
-    echo $json_response;
-}
 
 
 function getLikePublisher($linkpdo , $article){
@@ -313,12 +233,16 @@ function getIdByUser($username, $linkpdo) {
 }
 
 
-/*
-
-$user = "VGC";  
-$a = actionGetMesArticles($linkpdo,$user);
-$b = getLikePublisher($linkpdo,$a);
-print_r($b);
-*/
+function deliver_response($status, $status_message, $data){
+    /// Paramétrage de l'entête HTTP, suite
+    header("HTTP/1.1 $status $status_message");
+    /// Paramétrage de la réponse retournée
+    $response['status'] = $status;
+    $response['status_message'] = $status_message;
+    $response['data'] = $data;
+    /// Mapping de la réponse au format JSON
+    $json_response = json_encode($response);
+    echo $json_response;
+}
 
 ?>
