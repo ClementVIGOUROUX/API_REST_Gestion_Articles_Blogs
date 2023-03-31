@@ -79,7 +79,6 @@ function actionDeleteById($id,$linkpdo) {
 }
 
 
-//test recuperation de la fonction
 function isUserAuthor($idArticle, $user, $linkpdo) {
     
     $query = $linkpdo->prepare('SELECT u.userlogin FROM utilisateur u JOIN article a on u.idUtilisateur = a.idUtilisateur WHERE a.idArticle = ?');
