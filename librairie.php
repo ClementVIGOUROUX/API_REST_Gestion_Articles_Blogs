@@ -123,7 +123,6 @@ function actionPostAuth($userlogin, $userpassword, $linkpdo) {
         $requete = $linkpdo->prepare('SELECT userrole FROM utilisateur WHERE userlogin = ?');
         $requete->execute([$userlogin]);
         $role = $requete->fetch(); 
-        echo $role ;
 
         $headers = array('alg' => 'HS256', 'typ' => 'JWT');
         $payload = array('username' => $userlogin, 'role' => $role, 'exp' =>(time() + 60));
