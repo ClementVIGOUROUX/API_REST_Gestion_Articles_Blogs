@@ -267,7 +267,7 @@ function getLikeModerateur($linkpdo , $article){
 }
 
 function actionGetMesArticles($linkpdo,$user) {
-    $query = $linkpdo->query("SELECT  idArticle ,  nomAuteur as 'Auteur' , contenu  , datePublication as 'Date de Publication' FROM article JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur And utilisateur.userlogin = '$user' ORDER BY 3;");
+    $query = $linkpdo->query("SELECT  idArticle ,  nomAuteur as 'Auteur' , contenu  , datePublication as 'Date de Publication' FROM article JOIN utilisateur on article.idUtilisateur = utilisateur.idUtilisateur WHERE utilisateur.userlogin = '$user' ORDER BY 3;");
 
     if ($query == false) {
         die('Erreur query dans la fonction actionGet');
